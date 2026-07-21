@@ -1,5 +1,4 @@
 import { json } from '@sveltejs/kit';
-import { WorkerMailer } from 'worker-mailer';
 import type { RequestHandler } from './$types';
 import { buildContactEmail, validateContactInput } from '$lib/server/contact';
 
@@ -100,6 +99,9 @@ export const POST: RequestHandler = async ({ request, url, platform }) => {
 	}
 
 	try {
+		// worker-mailer needs cloudflare:sockets, which only exists in the Workers
+		// runtime — a static import would crash the SvelteKit build in Node.
+		const { WorkerMailer } = await import('worker-mailer');
 		await WorkerMailer.send(
 			{
 				host: smtp.host,
