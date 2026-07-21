@@ -1,3 +1,5 @@
+import type { EmailOptions } from 'worker-mailer';
+
 export const CONTACT_CATEGORIES = [
 	'project',
 	'contribution',
@@ -74,7 +76,7 @@ export function categoryLabel(category: ContactCategory): string {
 	}[category];
 }
 
-export function buildContactEmail(input: ContactInput, requestId: string): EmailMessageBuilder {
+export function buildContactEmail(input: ContactInput, requestId: string): EmailOptions {
 	const label = categoryLabel(input.category);
 	const safeName = escapeHtml(input.name);
 	const safeEmail = escapeHtml(input.email);
@@ -84,7 +86,7 @@ export function buildContactEmail(input: ContactInput, requestId: string): Email
 	return {
 		to: 'siliconsjang@gmail.com',
 		from: { email: 'contact@siliconbeest.io', name: 'SiliconBeest Hub' },
-		replyTo: { email: input.email, name: input.name },
+		reply: { email: input.email, name: input.name },
 		subject: `[SiliconBeest · ${label}] ${input.subject}`,
 		text: [
 			`A new message arrived from the SiliconBeest Hub.`,

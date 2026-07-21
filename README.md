@@ -27,12 +27,15 @@ To list an instance, fork this repository, add one entry to `instance.json`, run
 
 ## Contact email setup
 
-The contact form sends messages to `siliconsjang@gmail.com` through the Cloudflare Email Service `EMAIL` binding. Before deployment, onboard `siliconbeest.io` to Email Sending and verify the sender `contact@siliconbeest.io` and destination address.
+The contact form sends messages to `siliconsjang@gmail.com` over SMTP using [worker-mailer](https://github.com/zou-yu/worker-mailer). Configure the SMTP server as Worker secrets before deployment (use port 587 with STARTTLS or 465 with implicit TLS — Cloudflare Workers cannot connect on port 25):
 
 ```sh
-pnpm exec wrangler email sending enable siliconbeest.io
+pnpm exec wrangler secret put SMTP_HOST
+pnpm exec wrangler secret put SMTP_PORT
+pnpm exec wrangler secret put SMTP_USERNAME
+pnpm exec wrangler secret put SMTP_PASSWORD
 pnpm cf-typegen
 pnpm deploy
 ```
 
-Local `vite dev` does not provide Cloudflare bindings, so it can only preview the UI. Verify actual delivery with `pnpm preview` or in the deployed environment. The contact API uses a Worker Rate Limiting binding, same-origin checks, input size and format validation, and a honeypot.
+For local development, copy `.dev.vars.example` to `.dev.vars` and fill in real credentials. Local `vite dev` does not provide Cloudflare bindings, so it can only preview the UI. Verify actual delivery with `pnpm preview` or in the deployed environment. The contact API uses a Worker Rate Limiting binding, same-origin checks, input size and format validation, and a honeypot.

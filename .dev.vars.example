@@ -1,0 +1,11 @@
+# SMTP settings for the contact form (worker-mailer).
+# Copy to .dev.vars for local development; set as Worker secrets for production:
+#   pnpm exec wrangler secret put SMTP_HOST
+#   pnpm exec wrangler secret put SMTP_PORT
+#   pnpm exec wrangler secret put SMTP_USERNAME
+#   pnpm exec wrangler secret put SMTP_PASSWORD
+SMTP_HOST=smtp.example.com
+# 587 (STARTTLS) or 465 (implicit TLS). Cloudflare Workers cannot use port 25.
+SMTP_PORT=587
+SMTP_USERNAME=contact@siliconbeest.io
+SMTP_PASSWORD=change-me

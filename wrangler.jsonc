@@ -12,13 +12,6 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
-	"send_email": [
-		{
-			"name": "EMAIL",
-			"allowed_sender_addresses": ["contact@siliconbeest.io"],
-			"allowed_destination_addresses": ["siliconsjang@gmail.com"]
-		}
-	],
 	"ratelimits": [
 		{
 			"name": "CONTACT_RATE_LIMITER",

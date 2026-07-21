@@ -1,4 +1,5 @@
 import { json } from '@sveltejs/kit';
+import { WorkerMailer } from 'worker-mailer';
 import type { RequestHandler } from './$types';
 import { buildContactEmail, validateContactInput } from '$lib/server/contact';
 
@@ -60,7 +61,13 @@ export const POST: RequestHandler = async ({ request, url, platform }) => {
 		return json({ ok: false, message: 'The message is too long.' }, { status: 413 });
 	}
 
-	if (!platform?.env.EMAIL || !platform.env.CONTACT_RATE_LIMITER) {
+	const smtp = {
+		host: platform?.env.SMTP_HOST,
+		port: Number(platform?.env.SMTP_PORT ?? 587),
+		username: platform?.env.SMTP_USERNAME,
+		password: platform?.env.SMTP_PASSWORD
+	};
+	if (!smtp.host || !smtp.username || !smtp.password || !platform?.env.CONTACT_RATE_LIMITER) {
 		return json(
 			{ ok: false, message: 'Email delivery is not available yet. Please try again shortly.' },
 			{ status: 503 }
@@ -93,12 +100,21 @@ export const POST: RequestHandler = async ({ request, url, platform }) => {
 	}
 
 	try {
-		const result = await platform.env.EMAIL.send(buildContactEmail(validation.value, requestId));
+		await WorkerMailer.send(
+			{
+				host: smtp.host,
+				port: smtp.port,
+				secure: smtp.port === 465,
+				startTls: smtp.port !== 465,
+				credentials: { username: smtp.username, password: smtp.password },
+				authType: ['plain', 'login']
+			},
+			buildContactEmail(validation.value, requestId)
+		);
 		console.log(
 			JSON.stringify({
 				event: 'contact_email_sent',
 				requestId,
-				messageId: result.messageId,
 				category: validation.value.category
 			})
 		);
