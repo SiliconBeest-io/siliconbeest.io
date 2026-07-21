@@ -1,0 +1,63 @@
+name: Validate instance registry
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'instance.json'
+      - 'instance.schema.json'
+      - 'scripts/validate-instances.mjs'
+      - 'src/lib/instances.ts'
+      - 'src/routes/instances/**'
+      - 'src/routes/api/instances/**'
+      - 'src/routes/instance.json/**'
+      - 'src/routes/instance.schema.json/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/validate-instances.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'instance.json'
+      - 'instance.schema.json'
+      - 'scripts/validate-instances.mjs'
+      - 'src/lib/instances.ts'
+      - 'src/routes/instances/**'
+      - 'src/routes/api/instances/**'
+      - 'src/routes/instance.json/**'
+      - 'src/routes/instance.schema.json/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/validate-instances.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: instance-registry-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate instance.json
+        run: pnpm validate:instances
+
+      - name: Type-check and build
+        run: |
+          pnpm check
+          pnpm build

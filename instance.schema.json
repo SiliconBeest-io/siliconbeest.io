@@ -1,0 +1,34 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://siliconbeest.io/instance.schema.json",
+	"title": "SiliconBeest instance registry",
+	"type": "object",
+	"additionalProperties": false,
+	"required": ["$schema", "schemaVersion", "instances"],
+	"properties": {
+		"$schema": { "const": "./instance.schema.json" },
+		"schemaVersion": { "const": 1 },
+		"instances": {
+			"type": "array",
+			"items": { "$ref": "#/$defs/instance" }
+		}
+	},
+	"$defs": {
+		"instance": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["name", "domain", "url", "status"],
+			"properties": {
+				"name": { "type": "string", "minLength": 2, "maxLength": 80 },
+				"domain": {
+					"type": "string",
+					"pattern": "^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}$"
+				},
+				"url": { "type": "string", "format": "uri", "pattern": "^https://" },
+				"uri": { "type": "string", "format": "uri", "pattern": "^https://" },
+				"status": { "enum": ["production", "active", "development", "maintenance"] },
+				"featured": { "type": "boolean" }
+			}
+		}
+	}
+}

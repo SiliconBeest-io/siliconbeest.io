@@ -1,0 +1,20 @@
+{
+	"$schema": "./instance.schema.json",
+	"schemaVersion": 1,
+	"instances": [
+		{
+			"name": "SiliconBeest.io",
+			"domain": "s10t.io",
+			"url": "https://s10t.io",
+			"status": "production",
+			"featured": true
+		},
+		{
+			"name": "SiliconBeest by siliconsjang",
+			"domain": "siliconbeest.sjang.dev",
+			"url": "https://siliconbeest.sjang.dev",
+			"status": "development",
+			"featured": true
+		}
+	]
+}
